@@ -1,11 +1,15 @@
 use anchor_client::{
+	Program,
 	Client,
 	Cluster,
 	EventContext,
-	solana_sdk::signature::{
-		Keypair,
-		Signer,
-		read_keypair_file,
+	solana_sdk::{
+		commitment_config::CommitmentConfig,
+		signature::{
+			Keypair,
+			Signer,
+			read_keypair_file,
+		}
 	},
 };
 use std::{
@@ -16,7 +20,7 @@ use std::{
 use arc_swap::ArcSwap;
 
 pub struct DnState{
-	pub mango_client: ArcSwap<Arc<Client>>,
+	pub mango_client: ArcSwap<Arc<Program>>,
 	pub payer: dyn Signer,
 	// idk add other stuff in here too XD
 }
@@ -29,10 +33,11 @@ impl DnState{
 		let payer = read_keypair_file(&*shellexpand::tilde("~/.config/solana/payer.json"))
 			.expect("Wya wyd keypair???");
 
-		let client = Client::new_with_options(cluster: Cluster, Rc::new(payer), options: CommitmentConfig)
+		let client = 
+			Client::new_with_options(url, Rc::new(payer), CommitmentConfig::processed());
 
 		let dn_state = DnState {
-			mango_client: ArcSwap::from_pointee(Arc::new()),
+			mango_prpgram: ArcSwap::from_pointee(Arc::new(client.program())),
 		};
 
 		Box::leak(Box::new(dn_state))
