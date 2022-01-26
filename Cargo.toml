@@ -8,6 +8,9 @@ edition = "2021"
 [dependencies]
 anchor-client = "0.20"
 
+# Whyy???
+shellexpand = "2.1"
+
 arc-swap = "1.5"
 tokio = "1.15"
 rayon = "1.5"
