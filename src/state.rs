@@ -9,6 +9,7 @@ use anchor_client::{
 	},
 };
 use std::{
+	rc::Rc,
 	fs,
 	sync::Arc,
 };
@@ -25,12 +26,13 @@ impl DnState{
 	pub fn new() -> &'static DnState {
 		// Config Settings
 		let url = Cluster::Mainnet;
-		let payer = read_keypair_file(&*shellexpand::tilde("~/.config/solana/payer.json")).expect("Wya wyd keypair???");
+		let payer = read_keypair_file(&*shellexpand::tilde("~/.config/solana/payer.json"))
+			.expect("Wya wyd keypair???");
+
+		let client = Client::new_with_options(cluster: Cluster, Rc::new(payer), options: CommitmentConfig)
 
 		let dn_state = DnState {
-			mango_client: ArcSwap::from_pointee(
-				Arc::new(Client::new_with_options(url, Rc::new(payer), CommitmentConfig::processed()))
-			),
+			mango_client: ArcSwap::from_pointee(Arc::new()),
 		};
 
 		Box::leak(Box::new(dn_state))
