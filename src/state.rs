@@ -4,6 +4,7 @@ use anchor_client::{
 	Cluster,
 	EventContext,
 	solana_sdk::{
+		pubkey::Pubkey,
 		commitment_config::CommitmentConfig,
 		signature::{
 			Keypair,
@@ -13,8 +14,8 @@ use anchor_client::{
 	},
 };
 use std::{
-	rc::Rc,
 	fs,
+	rc::Rc,
 	sync::Arc,
 };
 use arc_swap::ArcSwap;
@@ -23,6 +24,16 @@ pub struct DnState{
 	pub mango_client: ArcSwap<Arc<Program>>,
 	pub payer: dyn Signer,
 	// idk add other stuff in here too XD
+}
+
+// What crack did you smoke to be writing this wtf...
+fn read_keys(path: &str) -> Vec<Arc<Pubkey>> {
+	return fs::read_to_string(path)
+		.unwrap()
+		.split('\n')
+		.filter(|s| !s.is_empty())
+		.map(|s| Arc::new(Pubkey::new(&s.chars().map(|c| c.to_digit(10).unwrap() as u8).collect::<Vec<u8>>())))
+		.collect();
 }
 
 // meh this will probably get bigger
@@ -37,7 +48,7 @@ impl DnState{
 			Client::new_with_options(url, Rc::new(payer), CommitmentConfig::processed());
 
 		let dn_state = DnState {
-			mango_prpgram: ArcSwap::from_pointee(Arc::new(client.program())),
+			mango_program: ArcSwap::from_pointee(Arc::new(client.program())),
 		};
 
 		Box::leak(Box::new(dn_state))
