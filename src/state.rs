@@ -18,12 +18,13 @@ use std::{
 	rc::Rc,
 	sync::Arc,
 	str::FromStr,
+	collections::HashMap,
 };
 use arc_swap::ArcSwap;
 
 pub struct DnState{
-	pub mango_client: ArcSwap<Arc<Program>>,
-	pub payer: dyn Signer,
+	pub programs: ArcSwap<HashMap<Arc<String>, Arc<Program>>>,
+	pub payer: Keypair,
 	// idk add other stuff in here too XD
 }
 
@@ -48,8 +49,19 @@ impl DnState{
 		let client = 
 			Client::new_with_options(url, Rc::new(payer), CommitmentConfig::processed());
 
+		let program_ids = read_keys("./config/programids.cfg");
+
+		// Adding manually for now
+		let program_map = HashMap::new();
+		program_map.insert(
+			Arc::new("Mango".to_string()),
+			Arc::new(client.program(*program_ids[0].clone()))
+		);
+		
+
 		let dn_state = DnState {
-			mango_program: ArcSwap::from_pointee(Arc::new(client.program())),
+			programs: ArcSwap::from_pointee(program_map),
+			payer
 		};
 
 		Box::leak(Box::new(dn_state))
