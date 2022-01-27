@@ -17,6 +17,7 @@ use std::{
 	fs,
 	rc::Rc,
 	sync::Arc,
+	str::FromStr,
 };
 use arc_swap::ArcSwap;
 
@@ -32,7 +33,7 @@ fn read_keys(path: &str) -> Vec<Arc<Pubkey>> {
 		.unwrap()
 		.split('\n')
 		.filter(|s| !s.is_empty())
-		.map(|s| Arc::new(Pubkey::new(&s.chars().map(|c| c.to_digit(10).unwrap() as u8).collect::<Vec<u8>>())))
+		.map(|s| Arc::new(Pubkey::from_str(s).unwrap()))
 		.collect();
 }
 
