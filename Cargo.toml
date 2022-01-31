@@ -7,6 +7,7 @@ edition = "2021"
 
 [dependencies]
 anchor-client = "0.20"
+pyth-client = "0.3.0"
 
 shellexpand = "2.1"
 
