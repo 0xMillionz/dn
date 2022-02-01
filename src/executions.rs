@@ -1,6 +1,6 @@
 use tokio::sync::broadcast;
 
-pub async fn run(rx_channel: &'static mut broadcast::Receiver<String>) {
+pub async fn run(rx_channel: broadcast::Receiver<String>) {
 	tokio::task::spawn(async move {
 		println!("Running execution loop!\n");
 		loop {
